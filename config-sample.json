@@ -1,0 +1,18 @@
+{
+	"Definitions": [
+		{
+			"Host": "localhost",
+			"Port": 5672,
+			"User": "guest",
+			"Password": "guest",
+			"Rules": [
+				{
+					"Name": "queue-1",
+					"Operand1": "",
+					"Operator": "",
+					"Operand2": ""
+				}
+			]
+		}
+	]
+}
