@@ -1,16 +1,18 @@
 {
+	"Frequency": 1,
 	"Definitions": [
 		{
+			"Name": "Main Server",
+			"Protocol": "http",
 			"Host": "localhost",
-			"Port": 5672,
+			"Port": 15672,
 			"User": "guest",
 			"Password": "guest",
 			"Rules": [
 				{
-					"Name": "queue-1",
-					"Operand1": "",
-					"Operator": "",
-					"Operand2": ""
+					"Name": "/%2F/test greater than 100",
+					"Path": "/api/queues/%2F/test",
+					"Greater": 100
 				}
 			]
 		}
