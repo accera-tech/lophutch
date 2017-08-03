@@ -12,7 +12,19 @@
 				{
 					"Name": "/%2F/test greater than 100",
 					"Path": "/api/queues/%2F/test",
-					"Greater": 100
+					"Limit": 10,
+					"Actions": [
+						{
+							"Name": "Slack notification",
+							"Cmd": "ls",
+							"Args": "."
+						},
+						{
+							"Name": "Run a new container",
+							"Cmd": "ps",
+							"Args": "-aux"
+						}
+					]
 				}
 			]
 		}
