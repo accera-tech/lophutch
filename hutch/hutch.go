@@ -69,10 +69,18 @@ func ProcessRule(def common.Definition, rule common.Rule) error {
 		res.Body.Close()
 	}()
 
+	if res.StatusCode != 200 {
+		return errors.Errorcf(map[string]interface{}{
+			"Request":  req,
+			"Response": res,
+		}, "HTTP request returned an unexpected response, %d %s", res.StatusCode, res.Status)
+	}
+
 	content := Queue{}
 	if err := json.NewDecoder(res.Body).Decode(&content); err != nil {
 		return errors.Wrap(err, "failed to parse the response body")
 	}
+	fmt.Println(content)
 
 	if content.Messages > rule.Limit {
 		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions...", def.Name, rule.Name)
