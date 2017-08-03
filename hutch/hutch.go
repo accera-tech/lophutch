@@ -3,7 +3,10 @@ package hutch
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
+	"os/exec"
 	"time"
 
 	"github.com/spf13/viper"
@@ -66,10 +69,34 @@ func ProcessRule(def common.Definition, rule common.Rule) error {
 		res.Body.Close()
 	}()
 
-	v := map[string]interface{}{}
-	if err := json.NewDecoder(res.Body).Decode(&v); err != nil {
+	content := Queue{}
+	if err := json.NewDecoder(res.Body).Decode(&content); err != nil {
 		return errors.Wrap(err, "failed to parse the response body")
 	}
-	fmt.Println(v)
+
+	if content.Messages > rule.Limit {
+		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions...", def.Name, rule.Name)
+
+		for _, action := range rule.Actions {
+			cmd := exec.Command(action.Cmd, action.Args)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			if err := cmd.Run(); err != nil {
+				log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions... FAIL", def.Name, rule.Name)
+				return errors.Wrapc(err, map[string]interface{}{
+					"Action": action.Name,
+				}, "failed to execute action")
+			}
+		}
+
+		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions... OK", def.Name, rule.Name)
+	} else {
+		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Good", def.Name, rule.Name)
+	}
+
 	return nil
+}
+
+type Queue struct {
+	Messages int
 }

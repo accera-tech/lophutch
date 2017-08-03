@@ -1,9 +1,16 @@
 package common
 
+type Action struct {
+	Name string
+	Cmd  string
+	Args string
+}
+
 type Rule struct {
 	Name    string
 	Path    string
-	Greater int
+	Limit   int
+	Actions []Action
 }
 
 type Definition struct {
