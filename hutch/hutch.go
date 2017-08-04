@@ -85,7 +85,7 @@ func ProcessRule(def common.Definition, rule common.Rule) error {
 		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions...", def.Name, rule.Name)
 
 		for _, action := range rule.Actions {
-			cmd := exec.Command(action.Cmd, action.Args)
+			cmd := exec.Command(action.Cmd, action.Args...)
 			cmd.Stdout = os.Stdout
 			cmd.Stderr = os.Stderr
 			if err := cmd.Run(); err != nil {

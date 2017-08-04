@@ -3,7 +3,7 @@ package common
 type Action struct {
 	Name string
 	Cmd  string
-	Args string
+	Args []string
 }
 
 type Rule struct {

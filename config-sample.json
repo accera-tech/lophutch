@@ -17,12 +17,12 @@
 						{
 							"Name": "Slack notification",
 							"Cmd": "ls",
-							"Args": "."
+							"Args": ["."]
 						},
 						{
 							"Name": "Run a new container",
 							"Cmd": "ps",
-							"Args": "-aux"
+							"Args": ["-aux"]
 						}
 					]
 				}
