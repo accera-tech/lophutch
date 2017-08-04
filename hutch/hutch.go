@@ -80,7 +80,6 @@ func ProcessRule(def common.Definition, rule common.Rule) error {
 	if err := json.NewDecoder(res.Body).Decode(&content); err != nil {
 		return errors.Wrap(err, "failed to parse the response body")
 	}
-	fmt.Println(content)
 
 	if content.Messages > rule.Limit {
 		log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions...", def.Name, rule.Name)
