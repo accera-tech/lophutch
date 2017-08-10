@@ -17,10 +17,11 @@ import (
 
 func Schedule(done <-chan struct{}) error {
 	ticker := time.NewTicker(viper.GetDuration("delay") * time.Millisecond)
+	delays := make(map[string]time.Time)
 	for {
 		select {
 		case <-ticker.C:
-			if err := Scout(); err != nil {
+			if err := Scout(delays); err != nil {
 				return errors.Wrap(err, "a scout failed")
 			}
 		case <-done:
@@ -30,14 +31,11 @@ func Schedule(done <-chan struct{}) error {
 	}
 }
 
-func Scout() error {
+func Scout(delays map[string]time.Time) error {
 	servers, err := getServers()
 	if err != nil {
 		return errors.Wrap(err, "failed to retrieve the configured servers")
 	}
-
-	delays := make(map[string]time.Time)
-
 	for _, server := range servers {
 		for _, rule := range server.Rules {
 			log.Printf("Server: %s | Rule: %s | Processing...", server.Description, rule.Description)
@@ -103,22 +101,15 @@ func processRule(server common.Server, rule common.Rule, delays map[string]time.
 
 	log.Printf("rule %s; executing", rule.Description)
 
-	// if content.Messages > rule.Limit {
-	// 	log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions...", def.Name, rule.Name)
+	for _, action := range rule.Actions {
+		if err := act(action); err != nil {
+			return errors.Wrapcf(err, map[string]interface{}{
+				"action": action,
+			}, "failed to execute action %s", action.Description)
+		}
+	}
 
-	// 	for _, action := range rule.Actions {
-	// 		if err := act(action); err != nil {
-	// 			log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions... FAIL", def.Name, rule.Name)
-	// 			return errors.Wrapc(err, map[string]interface{}{
-	// 				"action": action,
-	// 			}, "failed to execute action")
-	// 		}
-	// 	}
-
-	// 	log.Printf("Definition: \"%s\"; Rule: \"%s\"; Broken. Executing defined actions... OK", def.Name, rule.Name)
-	// } else {
-	// 	log.Printf("Definition: \"%s\"; Rule: \"%s\"; Good", def.Name, rule.Name)
-	// }
+	delays[rule.ID] = time.Now().Add(rule.Delay * time.Millisecond)
 
 	return nil
 }
