@@ -14,7 +14,7 @@ func init() {
 	}
 }
 
-var quit = make(chan struct{})
+var done = make(chan struct{})
 
 func main() {
 	if viper.GetBool("run-once") {
@@ -22,7 +22,7 @@ func main() {
 			log.Fatalf("Error:\n%+v", err)
 		}
 	} else {
-		if err := hutch.Schedule(quit); err != nil {
+		if err := hutch.Schedule(done); err != nil {
 			log.Fatalf("Error:\n%+v", err)
 		}
 	}
