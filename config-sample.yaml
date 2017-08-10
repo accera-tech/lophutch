@@ -1,3 +1,4 @@
+---
 delay: 1000
 servers:
 - description: main server
@@ -7,19 +8,18 @@ servers:
   user: guest
   password: guest
   rules:
-  - description: /lophutch/test1 should be properly consumed
+  - id: rule-1
+    description: /lophutch/test1 should be properly consumed
     request:
-    - method: GET
+      method: GET
       path: /api/queues/lophutch/test1
     evaluator: |-
-      function evaluate(response) {
-        if (response.messages_ready > 100)
-          return true
-        if (response.consumers < 2)
-          return true
-        return false
+      function evaluate(body) {
+        if (body.messages_ready > 10)
+          return true;
+        return false;
       }
-    next-action-delay: 30000
+    delay: 30000
     actions:
     - description: notify via Slack
       cmd: send-msg-slack
