@@ -39,6 +39,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/robertkrimen/otto"
+  packages = [".","ast","dbg","file","parser","registry","token"]
+  revision = "fc2eb1bbf1c5c462313c810bb02dc93cd964aebe"
+
+[[projects]]
+  branch = "master"
   name = "github.com/spf13/afero"
   packages = [".","mem"]
   revision = "9be650865eab0c12963d8753212f4f9c66cdcf12"
@@ -86,6 +92,12 @@
   revision = "3bd178b88a8180be2df394a1fbb81313916f0e7b"
 
 [[projects]]
+  name = "gopkg.in/sourcemap.v1"
+  packages = [".","base64vlq"]
+  revision = "6e83acea0053641eff084973fee085f0c193c61a"
+  version = "v1.0.5"
+
+[[projects]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
@@ -94,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3e52c7ba3b31948a2451ccafaf79fe806f325ecd322ecf76df90c30c75f5b1e7"
+  inputs-digest = "12fbc3e03a294997daa6a3a52aedadc1bff731999aab66049632b30bc2b5e08b"
   solver-name = "gps-cdcl"
   solver-version = 1

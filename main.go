@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"time"
 
 	"github.com/spf13/viper"
 	"github.com/tradeforce/lophutch/common"
@@ -14,15 +15,16 @@ func init() {
 	}
 }
 
-var quit = make(chan struct{})
+var done = make(chan struct{})
 
 func main() {
 	if viper.GetBool("run-once") {
-		if err := hutch.Scout(); err != nil {
+		delays := make(map[string]time.Time)
+		if err := hutch.Scout(delays); err != nil {
 			log.Fatalf("Error:\n%+v", err)
 		}
 	} else {
-		if err := hutch.Schedule(quit); err != nil {
+		if err := hutch.Schedule(done); err != nil {
 			log.Fatalf("Error:\n%+v", err)
 		}
 	}
