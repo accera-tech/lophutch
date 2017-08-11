@@ -75,6 +75,7 @@ func processRule(server common.Server, rule common.Rule, delays map[string]time.
 		return errors.Wrap(err, "failed to perform the configured HTTP request")
 	}
 
+	log.Printf("Server: %s | Rule: %s | Evaluating rule...", server.Description, rule.Description)
 	result, err := evaluateRule(rule.Evaluator, bodyStr)
 	if err != nil {
 		return errors.Wrapc(err, map[string]interface{}{
@@ -84,30 +85,37 @@ func processRule(server common.Server, rule common.Rule, delays map[string]time.
 	}
 
 	if !result {
-		log.Printf("rule %s; evaluated to false", rule.Description)
+		log.Printf("Server: %s | Rule: %s | Evaluated to false", server.Description, rule.Description)
 		return nil
 	}
+
+	log.Printf("Server: %s | Rule: %s | Evaluated to true", server.Description, rule.Description)
 
 	delay, ok := delays[rule.ID]
 	if ok {
 		if delay.Before(time.Now()) {
-			log.Printf("rule %s; deleting delay", rule.Description)
 			delete(delays, rule.ID)
 		} else {
-			log.Printf("rule %s; delayed", rule.Description)
+			log.Printf("Server: %s | Rule: %s | Delayed", server.Description, rule.Description)
 			return nil
 		}
 	}
 
-	log.Printf("rule %s; executing", rule.Description)
+	log.Printf("Server: %s | Rule: %s | Executing actions...", server.Description, rule.Description)
 
 	for _, action := range rule.Actions {
+		log.Printf("Server: %s | Rule: %s | Executing action %s...", server.Description, rule.Description, action.Description)
 		if err := act(action); err != nil {
-			return errors.Wrapcf(err, map[string]interface{}{
+			err = errors.Wrapcf(err, map[string]interface{}{
 				"action": action,
 			}, "failed to execute action %s", action.Description)
+			log.Printf("Server: %s | Rule: %s | Executing action %s... Fail - %s", server.Description, rule.Description, action.Description, err.Error())
+			break
 		}
+		log.Printf("Server: %s | Rule: %s | Executing action %s... OK", server.Description, rule.Description, action.Description)
 	}
+
+	log.Printf("Server: %s | Rule: %s | Executing actions... OK", server.Description, rule.Description)
 
 	delays[rule.ID] = time.Now().Add(rule.Delay * time.Millisecond)
 
