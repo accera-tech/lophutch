@@ -3,6 +3,19 @@ RabbitMQ monitoring service
 
 Lophutch is a flexible RabbitMQ monitoring service. It constantly pulls informations from a server through the RabbitMQ Management HTTP API and executes actions based on a user defined JavaScript functions that will decide if actions should be taken or not.
 
+## Installation
+
+It's a Go application and can be installed through:
+
+    go get -u github.com/tradeforce/lophutch
+
+## Usage
+
+You can check the available execution options providing the `--help` flag but for completion those are the available ones:
+
+* `--run-once`
+* `--config-file`
+
 ## Configuration file sample
 
 ```yaml
